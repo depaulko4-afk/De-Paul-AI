@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- RÉCUPÉRATION DES CLÉS AVEC LE PRÉFIXE GEMINI_API_KEY ---
+# --- RÉCUPÉRATION AUTOMATIQUE DE TOUTES LES CLÉS GEMINI_API_KEY ---
 API_KEYS = []
 try:
   for key_name in st.secrets:
@@ -22,7 +22,7 @@ except Exception:
 
 
 def get_rotating_client():
-  """Gère la rotation automatique entre les différentes clés des secrets"""
+  """Gère la rotation automatique entre toutes les clés configurées"""
   if not API_KEYS:
     return None, None
   if "api_key_index" not in st.session_state:
@@ -79,6 +79,7 @@ with st.sidebar:
       "Utilisez ce studio pour discuter, générer des images ou des animations"
       " dynamiques."
   )
+  st.info(f"🔑 Clés API actives détectées : **{len(API_KEYS)}**")
 
   st.markdown("---")
   st.markdown("### 📢 Publicité")
@@ -113,7 +114,7 @@ if "messages" not in st.session_state:
 if not API_KEYS:
   st.error(
       "⚠️ Veuillez configurer vos clés API dans les Secrets de Streamlit"
-      " (GEMINI_API_KEY1, GEMINI_API_KEY2)."
+      " (GEMINI_API_KEY1, GEMINI_API_KEY2, etc.)."
   )
 
 # --- TOP NAVIGATION BAR ---
@@ -232,7 +233,7 @@ if prompt := st.chat_input(
     with st.chat_message("assistant"):
       response_success = False
       attempts = 0
-      max_attempts = len(API_KEYS) if API_KEYS else 1
+      max_attempts = len(API_KEYS)
 
       while not response_success and attempts < max_attempts:
         try:
@@ -319,8 +320,7 @@ if prompt := st.chat_input(
               )
 
               st.session_state.messages.append({
-                  "role": "assistant",
-                  "type": "image",
+                  "role": "image",
                   "content": image_url,
                   "caption": prompt,
                   "input_image": (
@@ -361,6 +361,11 @@ if prompt := st.chat_input(
         except Exception as e:
           attempts += 1
           if attempts >= max_attempts:
-            st.error(f"Erreur après rotation des clés : {e}")
+            st.error(
+                "❌ **Quota épuisé sur toutes vos clés API !** Toutes vos"
+                f" {len(API_KEYS)} clés ont atteint leur limite journalière."
+                " Veuillez ajouter de nouvelles clés (`GEMINI_API_KEY3`, etc.)"
+                " dans vos secrets Streamlit pour continuer."
+            )
   else:
     st.error("⚠️ Client non initialisé. Vérifiez vos secrets.")
