@@ -11,9 +11,13 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- RÉCUPÉRATION DES CLÉS DEPUIS LES SECRETS STREAMLIT UNIQUEMENT ---
+# --- RÉCUPÉRATION DES CLÉS SÉPARÉES DEPUIS LES SECRETS ---
+API_KEYS = []
 try:
-  API_KEYS = st.secrets["GEMINI_KEYS"]
+  # Recherche automatique de toutes les clés commençant par GEMINI_KEYS dans les secrets
+  for key_name in st.secrets:
+    if key_name.startswith("GEMINI_KEYS"):
+      API_KEYS.append(st.secrets[key_name])
 except Exception:
   API_KEYS = []
 
@@ -80,11 +84,15 @@ with st.sidebar:
   st.markdown("---")
   st.markdown("### 📢 Publicité")
 
-  # --- CODE ADSTERRA INTÉGRÉ ---
+  # --- CODES ADSTERRA COMBINÉS ---
   ADSTERRA_CODE = """
-    <script type="text/javascript" src="https://pl31374843.profitableratecpmnetwork.com/47/58/0a/47580a63511d728afe1e68e4d8c796c7.js"></script>
+    <div style="text-align: center;">
+        <script type="text/javascript" src="https://pl31374844.profitableratecpmnetwork.com/39/7e/35/397e35bae2ba969d0705ae639056c3d5.js"></script>
+        <script async="async" data-cfasync="false" src="https://pl31374842.profitableratecpmnetwork.com/401a9c1e01727dd7d19700ecaaf3b03d/invoke.js"></script>
+        <div id="container-401a9c1e01727dd7d19700ecaaf3b03d"></div>
+    </div>
     """
-  components.html(ADSTERRA_CODE, height=260)
+  components.html(ADSTERRA_CODE, height=300)
 
 # --- MESSAGE DE BIENVENUE FORCÉ EN FRANÇAIS ---
 default_welcome = (
@@ -106,7 +114,7 @@ if "messages" not in st.session_state:
 if not API_KEYS:
   st.error(
       "⚠️ Veuillez configurer vos clés API dans les Secrets de Streamlit"
-      " (GEMINI_KEYS)."
+      " (GEMINI_KEYS1, etc.)."
   )
 
 # --- TOP NAVIGATION BAR ---
