@@ -11,11 +11,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# --- RÉCUPÉRATION DES CLÉS AVEC LE PRÉFIXE GEMIN_API_KEY ---
+# --- RÉCUPÉRATION DES CLÉS AVEC LE PRÉFIXE GEMINI_API_KEY ---
 API_KEYS = []
 try:
   for key_name in st.secrets:
-    if key_name.startswith("GEMIN_API_KEY"):
+    if key_name.startswith("GEMINI_API_KEY"):
       API_KEYS.append(st.secrets[key_name])
 except Exception:
   API_KEYS = []
@@ -113,7 +113,7 @@ if "messages" not in st.session_state:
 if not API_KEYS:
   st.error(
       "⚠️ Veuillez configurer vos clés API dans les Secrets de Streamlit"
-      " (GEMIN_API_KEY1, etc.)."
+      " (GEMINI_API_KEY1, GEMINI_API_KEY2)."
   )
 
 # --- TOP NAVIGATION BAR ---
